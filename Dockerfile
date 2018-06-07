@@ -24,3 +24,5 @@ RUN apt-get update && apt-get install -y \
  RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula \
     select true | debconf-set-selections
 RUN apt-get update && apt-get install -y ttf-mscorefonts-installer
+
+ENTRYPOINT [ "/usr/bin/firefox" ]
