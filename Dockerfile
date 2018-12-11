@@ -17,12 +17,16 @@ RUN apt-get update && apt-get install -y \
 	libgl1-mesa-glx \
     apt-transport-https \
 	--no-install-recommends \
-    && apt-get -y install pulseaudio \
+    && apt-get -y install pulseaudio ffmpeg \
 	&& rm -rf /var/lib/apt/lists/*
 
 #RUN echo "deb http://deb.debian.org/debian sid contrib non-free" >>/etc/apt/sources.list
  RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula \
     select true | debconf-set-selections
 RUN apt-get update && apt-get install -y ttf-mscorefonts-installer
+
+RUN add-apt-repository -y ppa:mc3man/trusty-media &&\
+    apt-get update &&\
+    apt-get install -y gstreamer0.10-ffmpeg
 
 ENTRYPOINT [ "/usr/bin/firefox" ]
