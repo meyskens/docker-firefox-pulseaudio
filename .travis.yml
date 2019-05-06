@@ -16,6 +16,8 @@ jobs:
         - ARCH=amd64
         - QEMU_BIN=qemu-x86_64-static
       install: &_install
+        - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+        - sudo service docker restart
         - docker run --rm --privileged multiarch/qemu-user-static:register
       script: &_script
         - docker build --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" -t $DOCKER_REPO:$ARCH-latest --squash ./
