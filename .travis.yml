@@ -22,6 +22,9 @@ jobs:
       script: &_script
         - cp /usr/bin/$QEMU_BIN ./
         - docker build --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" -t $DOCKER_REPO:$ARCH-latest --squash ./
+      after_success: &_after_success
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push $DOCKER_REPO:$ARCH-latest
 
     - stage: build
       addons: *_addons
@@ -30,6 +33,7 @@ jobs:
         - QEMU_BIN=qemu-arm-static
       install: *_install
       script: *_script
+      after_success: *_after_success
     - stage: build
       addons: *_addons
       env:
@@ -37,6 +41,8 @@ jobs:
         - QEMU_BIN=qemu-aarch64-static
       install: *_install
       script: *_script
+      after_success: *_after_success
+  
     - stage: manifest
       script:
         - echo "TO DO"
