@@ -16,13 +16,13 @@ jobs:
     - stage: build
       env:
         - ARCH=armhf
-      install: <<: *_install
-      script: <<: *_script
+      install: *_install
+      script: *_script
     - stage: build
       env:
         - ARCH=arm64v8
-      install: <<: *_install
-      script: <<: *_script
+      install: *_install
+      script: *_script
     - stage: manifest
       script:
         - echo "TO DO"
