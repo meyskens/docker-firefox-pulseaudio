@@ -8,12 +8,21 @@ jobs:
     - stage: build
       env:
         - ARCH=amd64
-        - ARCH=armhf
-        - ARCH=arm64v8
-      install:
+      install: &_install
         - docker run --rm --privileged multiarch/qemu-user-static:register
-      script:
+      script: &script
         - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO ./
+    
+    - stage: build
+      env:
+        - ARCH=armhf
+      install: *_install
+      script: *_script
+    - stage: build
+      env:
+        - ARCH=arm64v8
+      install: *_install
+      script: *_script
     - stage: manifest
       env:
         global:
