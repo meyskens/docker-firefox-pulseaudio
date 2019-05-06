@@ -24,8 +24,5 @@ jobs:
       install: *_install
       script: *_script
     - stage: manifest
-      env:
-        global:
-          - DOCKER_REPO=meyskens/firefox-pulseaudio
       script:
         - echo "TO DO"
