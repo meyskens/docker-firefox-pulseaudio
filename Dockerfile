@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     select true | debconf-set-selections
 RUN apt-get update && apt-get install -y ttf-mscorefonts-installer
 
+RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:mc3man/trusty-media &&\
     apt-get update &&\
     apt-get install -y gstreamer0.10-ffmpeg
