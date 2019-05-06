@@ -2,6 +2,9 @@
 ARG ARCH
 FROM $ARCH/ubuntu:xenial
 
+ARG QEMU_BIN
+COPY $QEMU_BIN /usr/bin
+
 RUN apt-get update && apt-get install -y \
 	dirmngr \
 	gnupg \
@@ -26,5 +29,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y ttf-mscorefonts-installer
 
 RUN apt-get update && apt-get install -y ubuntu-restricted-extras
+
+RUN rm /usr/bin/$QEMU_BIN
 
 ENTRYPOINT [ "/usr/bin/firefox" ]

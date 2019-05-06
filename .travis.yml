@@ -3,24 +3,35 @@ language: bash
 env:
   global:
     - DOCKER_REPO=meyskens/firefox-pulseaudio
+    - DOCKER_CLI_EXPERIMENTAL=enabled
 jobs:
   include:
     - stage: build
+      addons: &_addons
+        apt:
+          packages:
+            - qemu-user 
+            - qemu-user-static
       env:
         - ARCH=amd64
+        - QEMU_BIN=qemu-x86_64-static
       install: &_install
         - docker run --rm --privileged multiarch/qemu-user-static:register
       script: &_script
-        - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO:$ARCH-latest ./
+        - docker build --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" -t $DOCKER_REPO:$ARCH-latest --squash ./
 
     - stage: build
+      addons: *_addons
       env:
         - ARCH=armhf
+        - QEMU_BIN=qemu-arm-static
       install: *_install
       script: *_script
     - stage: build
+      addons: *_addons
       env:
         - ARCH=arm64v8
+        - QEMU_BIN=qemu-aarch64-static
       install: *_install
       script: *_script
     - stage: manifest
