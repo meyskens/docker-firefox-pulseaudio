@@ -1,20 +1,23 @@
 services: docker
 language: bash
-env:
-    global:
-      - DOCKER_REPO=meyskens/firefox-pulseaudio
-    matrix:
-      - ARCH=amd64
-      - ARCH=armhf
-      - ARCH=arm64v8
 
 jobs:
   include:
     - stage: build
+      env:
+        global:
+          - DOCKER_REPO=meyskens/firefox-pulseaudio
+        matrix:
+          - ARCH=amd64
+          - ARCH=armhf
+          - ARCH=arm64v8
       install:
         - docker run --rm --privileged multiarch/qemu-user-static:register
       script:
-        - docker build --build-arg="ARCH=$ARCH"
+        - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO ./
     - stage: manifest
+      env:
+        global:
+          - DOCKER_REPO=meyskens/firefox-pulseaudio
       script:
         - echo "TO DO"
