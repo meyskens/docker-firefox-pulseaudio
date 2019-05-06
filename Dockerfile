@@ -3,7 +3,7 @@ ARG ARCH
 FROM $ARCH/ubuntu:xenial
 
 ARG QEMU_BIN
-COPY $QEMU_BIN /usr/bin
+COPY /usr/bin/$QEMU_BIN /usr/bin
 
 RUN apt-get update && apt-get install -y \
 	dirmngr \
