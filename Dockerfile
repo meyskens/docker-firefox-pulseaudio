@@ -1,6 +1,6 @@
 # Based on https://github.com/jessfraz/dockerfiles/blob/master/firefox/Dockerfile
-
-FROM ubuntu:xenial
+ARG ARCH
+FROM $ARCH/ubuntu:xenial
 
 RUN apt-get update && apt-get install -y \
 	dirmngr \
