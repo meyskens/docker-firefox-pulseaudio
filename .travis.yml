@@ -10,7 +10,7 @@ jobs:
         - ARCH=amd64
       install: &_install
         - docker run --rm --privileged multiarch/qemu-user-static:register
-      script: &script
+      script: &_script
         - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO:$ARCH-latest ./
 
     - stage: build
