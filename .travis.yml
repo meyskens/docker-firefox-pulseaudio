@@ -11,18 +11,18 @@ jobs:
       install: &_install
         - docker run --rm --privileged multiarch/qemu-user-static:register
       script: &script
-        - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO ./
+        - docker build --build-arg="ARCH=$ARCH" -t $DOCKER_REPO:$ARCH-latest ./
 
     - stage: build
       env:
         - ARCH=armhf
-      install: *_install
-      script: *_script
+      install: <<: *_install
+      script: <<: *_script
     - stage: build
       env:
         - ARCH=arm64v8
-      install: <<*_install
-      script: <<*_script
+      install: <<: *_install
+      script: <<: *_script
     - stage: manifest
       script:
         - echo "TO DO"
