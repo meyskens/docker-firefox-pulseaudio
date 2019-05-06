@@ -20,6 +20,7 @@ jobs:
         - sudo service docker restart
         - docker run --rm --privileged multiarch/qemu-user-static:register
       script: &_script
+        - cp /usr/bin/$QEMU_BIN ./
         - docker build --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" -t $DOCKER_REPO:$ARCH-latest --squash ./
 
     - stage: build
