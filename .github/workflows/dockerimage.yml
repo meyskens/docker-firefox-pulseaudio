@@ -26,7 +26,7 @@ jobs:
       run: |
         if [[ "$ARCH" == "amd64" ]]; then export QEMU_BIN="qemu-x86_64-static"; fi
         if [[ "$ARCH" == "armhf" ]]; then export QEMU_BIN="qemu-arm-static"; fi
-        if [[ "$ARCH" == "arm64" ]]; then export QEMU_BIN="qemu-aarch64-static"; fi
+        if [[ "$ARCH" == "arm64v8" ]]; then export QEMU_BIN="qemu-aarch64-static"; fi
         cp /usr/bin/$QEMU_BIN ./
         docker build . --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" --squash --file Dockerfile --tag docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
       env:
