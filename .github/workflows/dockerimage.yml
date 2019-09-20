@@ -28,6 +28,7 @@ jobs:
     - name: Push image
       run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
   publish-manifest:
+    runs-on: ubuntu-latest
     needs: [build]
     steps:
       - name: Log in to registry
