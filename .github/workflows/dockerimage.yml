@@ -33,11 +33,7 @@ jobs:
         ARCH: ${{ matrix.arch }}
         DOCKER_CLI_EXPERIMENTAL: enabled
     - name: Log in to registry
-      uses: actions/docker/login@master
-      env:
-        DOCKER_REGISTRY_URL: docker.pkg.github.com
-        DOCKER_USERNAME: meyskens
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login docker.pkg.github.com -u "meyskens" --password-stdin
     - name: Push image
       run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
   publish-manifest:
@@ -50,11 +46,7 @@ jobs:
           sudo service docker restart
           docker run --rm --privileged multiarch/qemu-user-static:register
       - name: Log in to registry
-        uses: actions/docker/login@master
-        env:
-          DOCKER_REGISTRY_URL: docker.pkg.github.com
-          DOCKER_USERNAME: ${{ github.actor }}
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login docker.pkg.github.com -u "meyskens" --password-stdin
       - name: Create Manifest 
         run: |
           docker manifest create $DOCKER_REPO:latest $DOCKER_REPO:amd64-latest $DOCKER_REPO:armhf-latest $DOCKER_REPO:arm64v8-latest
