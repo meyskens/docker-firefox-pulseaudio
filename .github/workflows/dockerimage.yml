@@ -10,10 +10,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, armhf, arm64v8]
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/meyskens/docker-vscode-maartje/code:latest
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
+      env:
+        ARCH: ${{ matrix.arch }}
     - name: Log in to registry
       uses: actions/docker/login@master
       env:
@@ -21,4 +26,22 @@ jobs:
         DOCKER_USERNAME: ${{ github.actor }}
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     - name: Push image
-      run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:latest
+      run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
+  publish-manifest:
+    needs: [build]
+    steps:
+      - name: Log in to registry
+        uses: actions/docker/login@master
+        env:
+          DOCKER_REGISTRY_URL: docker.pkg.github.com
+          DOCKER_USERNAME: ${{ github.actor }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Manifest 
+        run: |
+          docker manifest create $DOCKER_REPO:latest $DOCKER_REPO:amd64-latest $DOCKER_REPO:armhf-latest $DOCKER_REPO:arm64v8-latest
+          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:amd64-latest --arch amd64
+          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:armhf-latest --arch arm --variant v7
+          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:arm64v8-latest --arch arm64 --variant armv8
+          docker manifest push $DOCKER_REPO:latest
+        env:
+          DOCKER_REPO: docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox
