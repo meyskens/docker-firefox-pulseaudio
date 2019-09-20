@@ -35,7 +35,7 @@ jobs:
     - name: Log in to registry
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login docker.pkg.github.com -u "meyskens" --password-stdin
     - name: Push image
-      run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
+      run: docker push docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/{{ matrix.arch }}:latest
   publish-manifest:
     runs-on: ubuntu-latest
     needs: [build]
@@ -49,11 +49,11 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login docker.pkg.github.com -u "meyskens" --password-stdin
       - name: Create Manifest 
         run: |
-          docker manifest create $DOCKER_REPO:latest $DOCKER_REPO:amd64-latest $DOCKER_REPO:armhf-latest $DOCKER_REPO:arm64v8-latest
-          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:amd64-latest --arch amd64
-          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:armhf-latest --arch arm --variant v7
-          docker manifest annotate $DOCKER_REPO:latest $DOCKER_REPO:arm64v8-latest --arch arm64 --variant armv8
-          docker manifest push $DOCKER_REPO:latest
+          docker manifest create $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:-latest $DOCKER_PREFIX/armhf:latest $DOCKER_PREFIX/arm64v8:latest
+          docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:-latest --arch amd64
+          docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/armhf:latest --arch arm --variant v7
+          docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/arm64v8:latest --arch arm64 --variant armv8
+          docker manifest push $DOCKER_PREFIX:latest
         env:
-          DOCKER_REPO: docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox
+          DOCKER_PREFIX: docker.pkg.github.com/meyskens/docker-firefox-pulseaudio
           DOCKER_CLI_EXPERIMENTAL: enabled
