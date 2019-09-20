@@ -15,10 +15,23 @@ jobs:
         arch: [amd64, armhf, arm64v8]
     steps:
     - uses: actions/checkout@v1
+    - name: Get qemu-user-static
+      run: apt-get update && apt-get install -y qemu-user-static
+    - name: Configure Docker
+      run: |
+        echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker run --rm --privileged multiarch/qemu-user-static:register
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
+      run: |
+        if [[ "$ARCH" == "amd64" ]]; then export QEMU_BIN="qemu-x86_64-static"; fi
+        if [[ "$ARCH" == "armhf" ]]; then export QEMU_BIN="qemu-arm-static"; fi
+        if [[ "$ARCH" == "arm64" ]]; then export QEMU_BIN="qemu-aarch64-static"; fi
+        cp /usr/bin/$QEMU_BIN ./
+        docker build . --build-arg="ARCH=$ARCH" --build-arg="QEMU_BIN=$QEMU_BIN" --squash --file Dockerfile --tag docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox:${{ matrix.arch }}-latest
       env:
         ARCH: ${{ matrix.arch }}
+        DOCKER_CLI_EXPERIMENTAL: enabled
     - name: Log in to registry
       uses: actions/docker/login@master
       env:
@@ -31,6 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
+      - name: Configure Docker
+        run: |
+          echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+          sudo service docker restart
+          docker run --rm --privileged multiarch/qemu-user-static:register
       - name: Log in to registry
         uses: actions/docker/login@master
         env:
@@ -46,3 +64,4 @@ jobs:
           docker manifest push $DOCKER_REPO:latest
         env:
           DOCKER_REPO: docker.pkg.github.com/meyskens/docker-firefox-pulseaudio/firefox
+          DOCKER_CLI_EXPERIMENTAL: enabled
