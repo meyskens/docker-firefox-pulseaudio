@@ -49,8 +49,8 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login docker.pkg.github.com -u "meyskens" --password-stdin
       - name: Create Manifest 
         run: |
-          docker manifest create $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:-latest $DOCKER_PREFIX/armhf:latest $DOCKER_PREFIX/arm64v8:latest
-          docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:-latest --arch amd64
+          docker manifest create $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:latest $DOCKER_PREFIX/armhf:latest $DOCKER_PREFIX/arm64v8:latest
+          docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/amd64:latest --arch amd64
           docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/armhf:latest --arch arm --variant v7
           docker manifest annotate $DOCKER_PREFIX/firefox:latest $DOCKER_PREFIX/arm64v8:latest --arch arm64 --variant armv8
           docker manifest push $DOCKER_PREFIX:latest
